@@ -1,9 +1,13 @@
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.annotations.Annotation;
+import org.jfree.chart.annotations.CategoryAnnotation;
+import org.jfree.chart.annotations.XYLineAnnotation;
+import org.jfree.chart.plot.*;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.ui.RectangleAnchor;
+import org.jfree.ui.TextAnchor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,18 +56,47 @@ public static double[] getArray() throws IOException {
             getContentPane().add(panel);
             // Fuente de Datos
             DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
-            for (int i = 0; i < size; i++) {
-                line_chart_dataset.addValue(data[i], "Temperature", " time "+i+1);
+            int x=1;
+            for (int i = 1; i < size; i++) {
+                if(i%10==0){
+                    line_chart_dataset.addValue(data[i], "Temperature","Day "+x);
+                    x++;
+                }else {
+
+                    line_chart_dataset.addValue(data[i], "Temperature", "e"+i );
+                }
             }
 
             // Creando el Grafico
-            JFreeChart chart1 = ChartFactory.createLineChart("Temperature per sample",
+            JFreeChart chart1 = ChartFactory.createLineChart("Raw temperature data over the examined period",
                     "Time", "Temperature", line_chart_dataset, PlotOrientation.VERTICAL,
                     true, true, false);
+
+
+
+            CategoryPlot p = chart1.getCategoryPlot();
+
+            for(int i=1;i<size;i=i+10) {
+                final CategoryMarker start = new CategoryMarker("e" + i);
+                start.setPaint(Color.red);
+                start.setLabel("Day");
+
+
+                start.setLabelAnchor(RectangleAnchor.BOTTOM_LEFT);
+                start.setLabelTextAnchor(TextAnchor.TOP_LEFT);
+                chart1.getCategoryPlot().addDomainMarker(start);
+            }
+
+
+
 
             // Mostrar Grafico
             ChartPanel chartPanel1 = new ChartPanel(chart1);
             panel.add(chartPanel1);
+
+
+
+
 
         }
     }
@@ -117,12 +150,19 @@ public static double[] getArray() throws IOException {
                 }
                 // Creando el Grafico
                 JFreeChart chart = ChartFactory.createBarChart3D
-                        ("Temperature/Day", "Days", "Temperature",
+                        ("Average Temperature/ Day", "Days", "Average Temperature",
                                 dataset, PlotOrientation.VERTICAL, true, true, false);
-                chart.setBackgroundPaint(Color.cyan);
+                chart.setBackgroundPaint(Color.white);
                 chart.getTitle().setPaint(Color.black);
                 CategoryPlot p = chart.getCategoryPlot();
                 p.setRangeGridlinePaint(Color.red);
+                final Marker start = new ValueMarker(40);
+                start.setPaint(Color.red);
+                start.setLabel("Risk temperature");
+                start.setLabelAnchor(RectangleAnchor.BOTTOM_LEFT);
+                start.setLabelTextAnchor(TextAnchor.TOP_LEFT);
+                p.addRangeMarker(start);
+
                 // Mostrar Grafico
                 ChartPanel chartPanel = new ChartPanel(chart);
                 panel.add(chartPanel);
