@@ -7,10 +7,12 @@ import org.jfree.chart.annotations.XYLineAnnotation;
 import org.jfree.chart.plot.*;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.RectangleAnchor;
+import org.jfree.ui.Size2D;
 import org.jfree.ui.TextAnchor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Dimension2D;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 public class Graph {
@@ -28,7 +30,7 @@ public static double[] getArray() throws IOException {
         size++;
     }
 
-    double[] data=new double[size+10];
+    double[] data=new double[size+24];
 
     for(int i=0;i<size;i++){
         line=br1.readLine();
@@ -52,13 +54,13 @@ public static double[] getArray() throws IOException {
         private void line() throws IOException {
             panel = new JPanel();
             double data[]=Graph.getArray();
-            int size=data.length-10;
+            int size=data.length-24;
             getContentPane().add(panel);
             // Fuente de Datos
             DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
             int x=1;
             for (int i = 1; i < size; i++) {
-                if(i%10==0){
+                if(i%24==0){
                     line_chart_dataset.addValue(data[i], "Temperature","Day "+x);
                     x++;
                 }else {
@@ -76,13 +78,30 @@ public static double[] getArray() throws IOException {
 
             CategoryPlot p = chart1.getCategoryPlot();
 
-            for(int i=1;i<size;i=i+10) {
-                final CategoryMarker start = new CategoryMarker("e" + i);
-                start.setPaint(Color.red);
-                start.setLabel("Day");
+           CategoryMarker start = new CategoryMarker("e" + 1);
+            start.setPaint(Color.black);
+            start.setLabel("   Day "+1);
+            start.setLabelAnchor(RectangleAnchor.LEFT);
+
+            start.setDrawAsLine(true);
+        start.setLabelTextAnchor(TextAnchor.TOP_LEFT);
+
+            chart1.getCategoryPlot().addDomainMarker(start);
+            int day=2;
+
+            for(int i=24;i<size;i=i+24) {
+               start = new CategoryMarker("e" + (i+   1));
+
+                start.setPaint(Color.black);
+                start.setLabel("   Day "+day);
+                day++;
 
 
-                start.setLabelAnchor(RectangleAnchor.BOTTOM_LEFT);
+
+               start.setLabelAnchor(RectangleAnchor.LEFT);
+
+               start.setDrawAsLine(true);
+
                 start.setLabelTextAnchor(TextAnchor.TOP_LEFT);
                 chart1.getCategoryPlot().addDomainMarker(start);
             }
@@ -115,16 +134,16 @@ public static double[] getArray() throws IOException {
 
             private void media() throws IOException {
                 double[] data = Graph.getArray();
-                int size = data.length - 10;
+                int size = data.length - 24;
                 panel = new JPanel();
                 getContentPane().add(panel);
                 // Fuente de Datos
                 DefaultCategoryDataset dataset = new DefaultCategoryDataset();
                 int days;
-                if (size % 10 == 0) {
-                    days = size / 10;
+                if (size % 24 == 0) {
+                    days = size / 24;
                 } else {
-                    days = (size / 10) + 1;
+                    days = (size / 24) + 1;
                 }
 
                 int c = 0;
@@ -132,7 +151,7 @@ public static double[] getArray() throws IOException {
                 for (int i = 0; i < days; i++) {
                     double datas = 0;
                     cont =0;
-                    for (int j = 0; j < 10; j++) {
+                    for (int j = 0; j < 24; j++) {
 
                         if (data[j + c] != 0) {
                             cont++;
@@ -142,7 +161,7 @@ public static double[] getArray() throws IOException {
                     }
                     datas = datas / cont;
 
-                    c = c + 10;
+                    c = c + 24;
                     if (datas > 40) {
                         System.err.println("Warning: RISK of high temperature in day " + (i + 1));
                     }
